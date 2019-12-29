@@ -34,8 +34,13 @@ class TestAgent(Agent):
             self.probabilities = {key: value / value.sum() for key, value in self.unigrams.items()}
             self.trained =  True
         self.update_lpv(observation)
-
+        history = [self.probabilities[sess['v']].argmax() for sess in observation.sessions()]
         action = self.probabilities[self.last_product_viewed].argmax()
+        if len(history) > 1:
+            print("Using history")
+            values, counts = np.unique(history, return_counts=True)
+            ind = np.argmax(counts)
+            action = values[ind]
         ps_all = np.zeros(self.config.num_products)
         ps_all[action] = 1.0
         return {

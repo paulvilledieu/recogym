@@ -19,22 +19,22 @@ class TestAgent(Agent):
 
     def train(self, observation, action, reward, done = False):
         """Train the model in an online fashion"""
-        #if observation.sessions():
-        #print("Action = {} => {}".format(action, reward))
-        #pass
-        if action:
-            self.trials[action["a"]] += 1
-            self.win[action["a"]] += reward
+        if observation.sessions():
+            for obs in observations
+            prediction = self.act(observation, reward, done)
+            if action:
+                reward = reward * (prediction['a'] == action['a'])
+                self.trials[action["a"]] += 1
+                self.win[action["a"]] += reward
 
     def act(self, observation, reward, done):
         """Make a recommendation"""
         if reward:
             self.trials[self.last_action] += 1
             self.win[self.last_action] += reward
-        #priors = [stats.beta(a=1 + w, b = 1 + t - w) for t, w in zip(self.trials, self.win)]
-        #theta_samples = [d.rvs(1) for d in priors]
-        #action = self.co_counts[self.last_product_viewed, :].argmax()
-        action = np.argmax(self.win)
+        priors = [stats.beta(a=1 + w, b = 1 + t - w) for t, w in zip(self.trials, self.win)]
+        theta_samples = [d.rvs(1) for d in priors]
+        action = np.argmax(theta_samples)
         ps_all = np.zeros(self.config.num_products)
         self.last_action = action
         ps_all[action] = 1.0
